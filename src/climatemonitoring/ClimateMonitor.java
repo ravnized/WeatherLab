@@ -19,6 +19,7 @@ public class ClimateMonitor {
     String longitude;
     static String filePathCoordinate = "data/CoordinateMonitoraggio.dati";
 
+
     public ClimateMonitor(String name, String country_id, String country, String latitude, String longitude) {
         this.name = name;
         this.country = country;
@@ -58,7 +59,6 @@ public class ClimateMonitor {
 
     }
 
-
     public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea) {
         Objects.requireNonNull(nomeArea);
         nomeArea = nomeArea.replaceAll("\\s", "");
@@ -79,6 +79,7 @@ public class ClimateMonitor {
         }
         return areaFoundList;
     }
+
     public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon) {
         Objects.requireNonNull(lat);
         Objects.requireNonNull(lon);
@@ -110,9 +111,7 @@ public class ClimateMonitor {
         return false;
     }
 
-    boolean registrazione() {
-        return false;
-    }
+
 
     boolean registraCentroAree() {
         return false;
