@@ -111,16 +111,6 @@ public class ClimateMonitor {
         return false;
     }
 
-
-
-    boolean registraCentroAree() {
-        return false;
-    }
-
-    boolean inserisciParametriClimatici() {
-        return false;
-    }
-
     public static void main(String[] args) {
         System.out.println("Hello world");
 

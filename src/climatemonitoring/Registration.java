@@ -43,6 +43,7 @@ public class Registration {
         Objects.requireNonNull(utenteRegistrato, "utenteRegistrato cannot be null");
 
         LinkedList<Registration> list = readRegistrati();
+
         for (Registration r : list) {
             if (r.userid.equals(utenteRegistrato.userid)) return false;
         }
