@@ -2,11 +2,13 @@ package src.climatemonitoring;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.tree.RowMapper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Array;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -26,6 +28,14 @@ public class ClimateMonitor {
         this.country_id = country_id;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public static HashMap<String, String> arrayResponseCreate(String success, String message) {
+        HashMap<String, String> arrayResponse = new HashMap<>();
+        arrayResponse.put("success", success);
+        arrayResponse.put("error", message);
+        return arrayResponse;
+
     }
 
     public static LinkedList<ClimateMonitor> readClimateCoordinates() {
@@ -107,18 +117,68 @@ public class ClimateMonitor {
         return areaFoundList;
     }
 
-    boolean visualizzaAreaGeografica() {
-        return false;
+    public static HashMap<String, String> visualizzaAreaGeografica(String nomeArea) {
+
+        Objects.requireNonNull(nomeArea);
+        LinkedList<ClimateMonitor> areaFoundList = cercaAreaGeografica(nomeArea);
+        if (areaFoundList.size() == 0) {
+            return arrayResponseCreate("false", "Area non trovata");
+        }
+
+        LinkedList<ParametriClimatici> listAll = ParametriClimatici.readParametri();
+        int[][] idMonitoraggio = new int[2][7];
+        String[] notesMonitoraggio = {"\n","\n", "\n", "\n", "\n", "\n", "\n"};
+        int numeroVolteAreaTrovata = 0;
+        for (ParametriClimatici parametriClimatici : listAll) {
+            if (parametriClimatici.areaInteresse.equals(nomeArea)) {
+                int index = ParametriClimatici.climateCategory.valueOf(parametriClimatici.climateCategoryToString).ordinal();
+                idMonitoraggio[0][index] += 1;
+                idMonitoraggio[1][index] += parametriClimatici.score;
+                notesMonitoraggio[index] += String.valueOf(idMonitoraggio[0][index])+". "+parametriClimatici.notes +" \n";
+                numeroVolteAreaTrovata += 1;
+            }
+        }
+
+        if (numeroVolteAreaTrovata == 0) {
+            return arrayResponseCreate("false", "Area non trovata");
+        }
+
+        for(int i = 0; i < 6; i++){
+            if (idMonitoraggio[0][i] != 0){
+                idMonitoraggio[1][i] = idMonitoraggio[1][i]/idMonitoraggio[0][i];
+            }
+
+        }
+        String climateCategory ="";
+        for(int i=0; i<6; i++){
+            if(idMonitoraggio[0][i] != 0){
+                climateCategory += "\n"+ParametriClimatici.climateCategory.values()[i]+": \n" +
+                        "Trovata: "+String.valueOf(idMonitoraggio[0][i])+" volte \n"+
+                        "Media: "+String.valueOf(idMonitoraggio[1][i])+" su 5 \n"+
+                        "Note: " + notesMonitoraggio[i];
+            }else{
+                climateCategory +=  "\n"+ ParametriClimatici.climateCategory.values()[i]+": \n" +
+                        "Non Trovata \n";
+            }
+
+        }
+
+        return arrayResponseCreate("true",climateCategory);
+
+
+
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello world");
+        HashMap<String, String> arrayResponse = visualizzaAreaGeografica("Roma");
+System.out.println(arrayResponse.get("error"));
 
+
+        /*
         LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica("42","1");
         for (ClimateMonitor climateMonitor : areaTrovata) {
             System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
         }
-        /*
         LinkedList<ClimateMonitor> list = readClimateCoordinates();
         for (ClimateMonitor climateMonitor : list) {
             System.out.println(climateMonitor.name);
@@ -127,3 +187,4 @@ public class ClimateMonitor {
          */
     }
 }
+
