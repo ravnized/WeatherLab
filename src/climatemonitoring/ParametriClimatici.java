@@ -107,7 +107,7 @@ public class ParametriClimatici extends Login {
             arrayResponse = arrayResponseCreate("false", "Centro non trovato");
             return arrayResponse;
         }
-        if (ClimateMonitor.cercaAreaGeografica(parametriClimatici.areaInteresse).size() == 0){
+        if (ClimateMonitor.cercaAreaGeografica(parametriClimatici.areaInteresse,0).size() == 0){
             arrayResponse = arrayResponseCreate("false", "Area non trovata");
             return arrayResponse;
         }

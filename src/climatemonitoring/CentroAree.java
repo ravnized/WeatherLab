@@ -72,7 +72,7 @@ public class CentroAree extends Login {
             return false;
         }
         Objects.requireNonNull(centro, "centro cannot be null");
-        int sizeList = ClimateMonitor.cercaAreaGeografica(centro.citta).size();
+        int sizeList = ClimateMonitor.cercaAreaGeografica(centro.citta,0).size();
         if(sizeList == 0) return false;
         LinkedList<CentroAree> list = readCentri();
         for (CentroAree c : list) {

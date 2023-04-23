@@ -2,6 +2,7 @@ package src.climatemonitoring;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import javax.swing.tree.RowMapper;
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.sql.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class ClimateMonitor {
 
@@ -69,7 +71,7 @@ public class ClimateMonitor {
 
     }
 
-    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea) {
+    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea, int scelta) {
         Objects.requireNonNull(nomeArea);
         nomeArea = nomeArea.replaceAll("\\s", "");
         LinkedList<ClimateMonitor> areaFoundList = new LinkedList<>();
@@ -80,17 +82,24 @@ public class ClimateMonitor {
         if (climateList.size() == 0) {
             return areaFoundList;
         }
-
-        for (ClimateMonitor climate : climateList) {
-            String climateFull = climate.name + climate.country_id + climate.country;
-            if (climateFull.contains(nomeArea)) {
-                areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+        if (scelta == 0){
+            for (ClimateMonitor climate : climateList) {
+                if (climate.name.equals(nomeArea)) {
+                    areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+                }
+            }
+        }else if (scelta == 1) {
+            for (ClimateMonitor climate : climateList) {
+                if (climate.country.equals(nomeArea)) {
+                    areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+                }
             }
         }
+
         return areaFoundList;
     }
 
-    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon) {
+    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon, int scelta) {
         Objects.requireNonNull(lat);
         Objects.requireNonNull(lon);
         LinkedList<ClimateMonitor> areaFoundList = new LinkedList<>();
@@ -101,26 +110,37 @@ public class ClimateMonitor {
         if (climateList.size() == 0) {
             return areaFoundList;
         }
-
-        for (ClimateMonitor climate : climateList) {
-            String[] climateLongArr;
-            climateLongArr = climate.longitude.split("\\.");
-            climateLongArr[0] = climateLongArr[0].replaceAll("\\s", "");
-            String[] climateLatArr;
-            climateLatArr = climate.latitude.split("\\.");
-            climateLatArr[0]=climateLatArr[0].substring(1);
-            //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
-            if(climateLatArr[0].equals(lat) && climateLongArr[0].equals(lon)){
-                areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+        if (scelta == 0){
+            for (ClimateMonitor climate : climateList) {
+                //replace double quotes with empty string
+                climate.latitude = climate.latitude.replaceAll("\\s", "");
+                climate.longitude = climate.longitude.replaceAll("\\s", "");
+                //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
+                if(climate.latitude.equals(lat) && climate.longitude.equals(lon)){
+                    areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+                }
             }
+        } else {
+            for (ClimateMonitor climate : climateList) {
+                //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
+                String[] climateLongArr;
+                climateLongArr = climate.longitude.split("\\.");
+                climateLongArr[0] = climateLongArr[0].replaceAll("\\s", "");
+                String[] climateLatArr;
+                climateLatArr = climate.latitude.split("\\.");
+                //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
+                if(climateLatArr[0].contains(lat) && climateLongArr[0].contains(lon) && climateLatArr[0].length() == lat.length() && climateLongArr[0].length() == lon.length()){
+                    areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
+            }}
         }
+
         return areaFoundList;
     }
 
     public static HashMap<String, String> visualizzaAreaGeografica(String nomeArea) {
 
         Objects.requireNonNull(nomeArea);
-        LinkedList<ClimateMonitor> areaFoundList = cercaAreaGeografica(nomeArea);
+        LinkedList<ClimateMonitor> areaFoundList = cercaAreaGeografica(nomeArea,0);
         if (areaFoundList.size() == 0) {
             return arrayResponseCreate("false", "Area non trovata");
         }
@@ -170,8 +190,94 @@ public class ClimateMonitor {
     }
 
     public static void main(String[] args) {
-        HashMap<String, String> arrayResponse = visualizzaAreaGeografica("Roma");
-System.out.println(arrayResponse.get("error"));
+
+        int risposta = 0;
+        do{
+            System.out.println("Benvenuto nel programma di monitoraggio climatico");
+            System.out.println("Premi 1 per cercare un'area geografica tramite nome");
+            System.out.println("Premi 2 per cercare un'area geografica tramite stato");
+            System.out.println("Premi 3 per cercare un'area geografica tramite latitudine e longitudine Precisa");
+            System.out.println("Premi 4 per cercare un'area geografica tramite latitudine e longitudine Approssimata");
+            System.out.println("Premi 5 per visualizzare le statistiche di un'area geografica");
+            System.out.println("Premi 0 per uscire");
+            Scanner scanner = new Scanner(System.in);
+            risposta = scanner.nextInt();
+            switch (risposta) {
+                case 1 -> {
+                    System.out.println("Inserisci il nome dell'area geografica");
+                    scanner = new Scanner(System.in);
+                    String nomeArea = scanner.nextLine();
+                    LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(nomeArea, 0);
+                    if (areaTrovata.size() == 0) {
+                        System.out.println("Area non trovata");
+                    } else {
+                        for (ClimateMonitor climateMonitor : areaTrovata) {
+                            System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
+                        }
+                    }
+                }
+                case 2 -> {
+                    System.out.println("Inserisci il nome dell'area geografica");
+                    scanner = new Scanner(System.in);
+                    String nomeArea = scanner.nextLine();
+                    LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(nomeArea, 1);
+                    if (areaTrovata.size() == 0) {
+                        System.out.println("Area non trovata");
+                    } else {
+                        for (ClimateMonitor climateMonitor : areaTrovata) {
+                            System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
+                        }
+                    }
+                }
+                case 3 -> {
+                    System.out.println("Inserisci la latitudine");
+                    scanner = new Scanner(System.in);
+                    String lat = scanner.nextLine();
+                    System.out.println("Inserisci la longitudine");
+                    scanner = new Scanner(System.in);
+                    String lon = scanner.nextLine();
+                    LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(lat, lon, 0);
+                    if (areaTrovata.size() == 0) {
+                        System.out.println("Area non trovata");
+                    } else {
+                        for (ClimateMonitor climateMonitor : areaTrovata) {
+                            System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
+                        }
+                    }
+                }
+                case 4 -> {
+                    System.out.println("Inserisci la latitudine");
+                    scanner = new Scanner(System.in);
+                    String lat = scanner.nextLine();
+                    System.out.println("Inserisci la longitudine");
+                    scanner = new Scanner(System.in);
+                    String lon = scanner.nextLine();
+                    LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(lat, lon, 1);
+                    if (areaTrovata.size() == 0) {
+                        System.out.println("Area non trovata");
+                    } else {
+                        for (ClimateMonitor climateMonitor : areaTrovata) {
+                            System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
+                        }
+                    }
+                }
+                case 5 -> {
+                    System.out.println("Inserisci il nome dell'area geografica");
+                    scanner = new Scanner(System.in);
+                    String nomeArea = scanner.nextLine();
+                    HashMap<String,String> areaTrovata = visualizzaAreaGeografica(nomeArea);
+                    if (areaTrovata.get("success").equals("false")) {
+                        System.out.println("Area non trovata");
+                    } else {
+                        System.out.println(areaTrovata.get("error"));
+                    }
+                }
+            }
+
+        }while (risposta != 0);
+
+
+
 
 
         /*
