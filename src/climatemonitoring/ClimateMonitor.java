@@ -1,14 +1,12 @@
 package src.climatemonitoring;
 
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.tree.RowMapper;
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Array;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -71,7 +69,7 @@ public class ClimateMonitor {
 
     }
 
-    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea, int scelta) {
+    public static LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea, int scelta) {
         Objects.requireNonNull(nomeArea);
         nomeArea = nomeArea.replaceAll("\\s", "");
         LinkedList<ClimateMonitor> areaFoundList = new LinkedList<>();
@@ -99,7 +97,7 @@ public class ClimateMonitor {
         return areaFoundList;
     }
 
-    public static @NotNull LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon, int scelta) {
+    public static LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon, int scelta) {
         Objects.requireNonNull(lat);
         Objects.requireNonNull(lon);
         LinkedList<ClimateMonitor> areaFoundList = new LinkedList<>();
@@ -275,8 +273,7 @@ public class ClimateMonitor {
             }
 
         }while (risposta != 0);
-
-
+        System.out.println("Grazie per aver usato il programma di monitoraggio climatico");
 
 
 
