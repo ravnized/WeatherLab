@@ -183,12 +183,9 @@ public class ClimateMonitor {
 
         return arrayResponseCreate("true",climateCategory);
 
-
-
     }
 
-    public static void main(String[] args) {
-
+    public static void menuUtente(boolean ... logged){
         int risposta = 0;
         do{
             System.out.println("Benvenuto nel programma di monitoraggio climatico");
@@ -197,7 +194,11 @@ public class ClimateMonitor {
             System.out.println("Premi 3 per cercare un'area geografica tramite latitudine e longitudine Precisa");
             System.out.println("Premi 4 per cercare un'area geografica tramite latitudine e longitudine Approssimata");
             System.out.println("Premi 5 per visualizzare le statistiche di un'area geografica");
-            System.out.println("Premi 0 per uscire");
+            if(logged[0]){
+                System.out.println("Premi 6 per creare un centro di monitoraggio");
+                System.out.println("Premi 7 per inserire/aggiornare i parametri climatici");
+            }
+            System.out.println("Premi 0 per ritornare al menu precedente");
             Scanner scanner = new Scanner(System.in);
             risposta = scanner.nextInt();
             switch (risposta) {
@@ -263,17 +264,193 @@ public class ClimateMonitor {
                     System.out.println("Inserisci il nome dell'area geografica");
                     scanner = new Scanner(System.in);
                     String nomeArea = scanner.nextLine();
-                    HashMap<String,String> areaTrovata = visualizzaAreaGeografica(nomeArea);
+                    HashMap<String, String> areaTrovata = visualizzaAreaGeografica(nomeArea);
                     if (areaTrovata.get("success").equals("false")) {
                         System.out.println("Area non trovata");
                     } else {
                         System.out.println(areaTrovata.get("error"));
                     }
                 }
+                case 6 -> {
+                    if (logged[0]) {
+                        System.out.println("Inserisci il nome del centro");
+                        scanner = new Scanner(System.in);
+                        String nomeCentro = scanner.nextLine();
+                        System.out.println("Inserisci l'indirizzo del centro");
+                        scanner = new Scanner(System.in);
+                        String indirizzoCentro = scanner.nextLine();
+                        System.out.println("Inserisci la citta");
+                        scanner = new Scanner(System.in);
+                        String citta = scanner.nextLine();
+                        CentroAree centroAree = new CentroAree(0, nomeCentro, indirizzoCentro, citta);
+                        boolean centroResult = CentroAree.insertCentro(centroAree);
+                        if (centroResult) {
+                            System.out.println("Centro inserito correttamente");
+                        } else {
+                            System.out.println("Errore nell'inserimento del centro");
+                        }
+                    } else {
+                        System.out.println("Non sei loggato");
+                    }
+                }
+                case 7 -> {
+                    if (logged[0]) {
+                        HashMap<String, String> response;
+                        String date = ParametriClimatici.dateNow();
+                        System.out.println("Inserisci l'id del centro");
+                        scanner = new Scanner(System.in);
+                        int idCentro = scanner.nextInt();
+                        System.out.println("Inserisci l'area d'interesse");
+                        scanner = new Scanner(System.in);
+                        String area = scanner.nextLine();
+                        System.out.println("Inserisci il numero corrispondente al tipo di dato che vuoi inserire");
+                        System.out.println("1 - Vento: Velocità del vento (km/h), suddivisa in fasce ");
+                        System.out.println("2 - Umidita: % di Umidità, suddivisa in fasce'");
+                        System.out.println("3 - Pressione: In hPa, suddivisa in fasce ");
+                        System.out.println("4 - Temperatura: In C°, suddivisa in fasce");
+                        System.out.println("5 - Precipitazioni: In mm di pioggia, suddivisa in fasce");
+                        System.out.println("6 - Altitudine dei ghiacciai: In m, suddivisa in piogge");
+                        System.out.println("7 - Massa dei ghiacciai: In kg, suddivisa in fasce");
+                        scanner = new Scanner(System.in);
+                        int tipoDato = scanner.nextInt();
+                        System.out.println("Inserisci lo score per il parametro scelto");
+                        scanner = new Scanner(System.in);
+                        int score = scanner.nextInt();
+                        System.out.println("Inserisci le note");
+                        scanner = new Scanner(System.in);
+                        String note = scanner.nextLine();
+                        while (note.length() > 256) {
+                            System.out.println("Le note non possono superare i 256 caratteri");
+                            System.out.println("Inserisci le note");
+                            scanner = new Scanner(System.in);
+                            note = scanner.nextLine();
+                        }
+                        response = ParametriClimatici.inserisciParametriClimatici(new ParametriClimatici(idCentro, area, date, tipoDato, score, note));
+                        if (response.get("success").equals("true")) {
+                            System.out.println("Parametri inseriti correttamente");
+
+                        }
+                    }
+                }
             }
 
         }while (risposta != 0);
         System.out.println("Grazie per aver usato il programma di monitoraggio climatico");
+    }
+
+    public static void insertCentroArea(int idCentro,boolean autenticato){
+        if (!autenticato){
+            System.out.println("Non sei loggato");
+            menuUtente();
+        }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Inserisci il nome del centro");
+        String nomeCentro = scanner.nextLine();
+        System.out.println("Inserisci l'indirizzo del centro");
+        String indirizzoCentro = scanner.nextLine();
+        System.out.println("Inserisci la citta");
+        String citta = scanner.nextLine();
+        CentroAree centroAree = new CentroAree(idCentro,nomeCentro,indirizzoCentro,citta);
+        boolean centroResult =CentroAree.insertCentro(centroAree);
+        if (centroResult){
+            System.out.println("Centro inserito correttamente");
+            menuUtente(autenticato);
+        }else{
+            System.out.println("Errore nell'inserimento del centro");
+        }
+    }
+
+
+
+    public static void menuLogin(Login login){
+        int risposta= 0;
+        do{
+            System.out.println("Benvenuto nel programma di monitoraggio climatico");
+            System.out.println("Premi 1 per registrarti");
+            System.out.println("Premi 2 per effettuare il login");
+            System.out.println("Premi 3 per continuare come guest");
+            System.out.println("Premi 0 per uscire");
+            Scanner scanner = new Scanner(System.in);
+            risposta = scanner.nextInt();
+            switch (risposta) {
+                case 1 -> {
+                    boolean insertCentro = false;
+                    System.out.println("Inserisci il tuo nome");
+                    scanner = new Scanner(System.in);
+                    String nome = scanner.nextLine();
+                    System.out.println("Inserisci il tuo cognome");
+                    scanner = new Scanner(System.in);
+                    String cognome = scanner.nextLine();
+                    System.out.println("Inserisci il tuo username");
+                    scanner = new Scanner(System.in);
+                    String username = scanner.nextLine();
+                    System.out.println("Inserisci la tua password");
+                    scanner = new Scanner(System.in);
+                    String password = scanner.nextLine();
+                    System.out.println("Inserisci la tua email");
+                    scanner = new Scanner(System.in);
+                    String email = scanner.nextLine();
+                    System.out.println("Inserisci il tuo codice fiscale");
+                    scanner = new Scanner(System.in);
+                    String codiceFiscale = scanner.nextLine();
+                    System.out.println("Inserisci il tuo centro di appartenenza");
+                    scanner = new Scanner(System.in);
+                    int centro = scanner.nextInt();
+                    if (CentroAree.cercaCentro(centro) == null) {
+                        System.out.println("Centro non trovato");
+                        insertCentro = true;
+                    } else {
+                        System.out.println("Centro Trovato");
+                    }
+                    Registration registration = new Registration(nome, cognome, codiceFiscale, email, username, password, centro);
+                    boolean registrationResult = Registration.registrazione(registration);
+                    if (registrationResult) {
+                        System.out.println("Registrazione effettuata con successo");
+                    } else {
+                        System.out.println("Registrazione fallita");
+                    }
+                    if (insertCentro) {
+                        login = new Login(username, password);
+                        boolean autenticato = login.login();
+                        insertCentroArea(centro, autenticato);
+                    }
+                }
+                case 2 -> {
+                    System.out.println("Inserisci il tuo username");
+                    scanner = new Scanner(System.in);
+                    String username = scanner.nextLine();
+                    System.out.println("Inserisci la tua password");
+                    scanner = new Scanner(System.in);
+                    String password = scanner.nextLine();
+                    login = new Login(username, password);
+                    boolean logged = login.login();
+                    if (logged) {
+                        System.out.println("Login effettuato con successo");
+                        menuUtente(logged);
+                    } else {
+                        System.out.println("Login fallito");
+                    }
+                }
+                case 3 -> {
+                    System.out.println("Continui come guest");
+                    menuUtente();
+                }
+            }
+
+        }while(risposta != 0);
+    }
+
+
+
+    public static void main(String[] args) {
+
+
+
+        Login login = new Login();
+        menuLogin(login);
+
+
+
 
 
 

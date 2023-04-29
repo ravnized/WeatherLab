@@ -75,8 +75,9 @@ public class CentroAree extends Login {
         int sizeList = ClimateMonitor.cercaAreaGeografica(centro.citta,0).size();
         if(sizeList == 0) return false;
         LinkedList<CentroAree> list = readCentri();
-        for (CentroAree c : list) {
-            if (c.id == centro.id) return false;
+        assert list != null;
+        for (CentroAree centroAree : list) {
+            if (centroAree.id == centro.id) return false;
         }
         list.addLast(centro);
         return writeCentri(list);
@@ -92,9 +93,9 @@ public class CentroAree extends Login {
 
 
     public static void main(String[] args){
-        Login login = new Login("ravnized", "aaa");
+        Login login = new Login("ravnized", "ravnized");
         login.login();
-        CentroAree centro = new CentroAree(2, "Centro1", "Via Roma", "Roma");
+        CentroAree centro = new CentroAree(4, "Centro1", "Via Roma", "Roma");
         insertCentro(centro);
     }
 }

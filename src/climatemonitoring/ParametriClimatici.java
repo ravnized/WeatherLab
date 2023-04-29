@@ -120,14 +120,17 @@ public class ParametriClimatici extends Login {
         return arrayResponse;
     }
 
+    public static String dateNow(){
+        LocalDateTime dateNow = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return dateNow.format(formatter);
+    }
+
     public static void main(String[] args) {
         Login login = new Login("ravnized", "ravnized");
         login.login();
         HashMap<String, String> response;
-        LocalDateTime dateNow = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-        String formatDateTime = dateNow.format(formatter);
-        response = inserisciParametriClimatici(new ParametriClimatici(1, "Roma", formatDateTime, 3, 5, "minchia se piove"));
+        response = inserisciParametriClimatici(new ParametriClimatici(1, "Roma", dateNow(), 3, 5, "minchia se piove"));
         System.out.println(response.get("error"));
     }
 }
