@@ -1,27 +1,31 @@
 package src.climatemonitoring;
 
-
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
+/**
+ * Main Class
+ */
 public class ClimateMonitor {
 
+    static String filePathCoordinate = "data/CoordinateMonitoraggio.dati";
     String name;
     String country;
     String country_id;
     String latitude;
     String longitude;
-    static String filePathCoordinate = "data/CoordinateMonitoraggio.dati";
 
-
+    /**
+     * Constructor to build the object
+     * @param name String
+     * @param country_id String
+     * @param country String
+     * @param latitude String
+     * @param longitude String
+     */
     public ClimateMonitor(String name, String country_id, String country, String latitude, String longitude) {
         this.name = name;
         this.country = country;
@@ -30,6 +34,12 @@ public class ClimateMonitor {
         this.longitude = longitude;
     }
 
+    /**
+     * Function to manage HashMap
+     * @param success String
+     * @param message String
+     * @return HashMap
+     */
     public static HashMap<String, String> arrayResponseCreate(String success, String message) {
         HashMap<String, String> arrayResponse = new HashMap<>();
         arrayResponse.put("success", success);
@@ -38,37 +48,47 @@ public class ClimateMonitor {
 
     }
 
+    /**
+     * Function to read the coordinate
+     * @return LinkedList
+     */
     public static LinkedList<ClimateMonitor> readClimateCoordinates() {
         LinkedList<ClimateMonitor> list = new LinkedList<>();
         File file = new File(filePathCoordinate);
 
-            if (!file.exists()){
-                System.out.println("File non esistente");
-                return list;
-            }
-
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(filePathCoordinate));
-                String[] field;
-                while (true) {
-                    int index = 0;
-                    String readerLiner = reader.readLine();
-                    if (readerLiner == null || readerLiner.equals("")) break;
-                    field = readerLiner.split(",");
-                    ClimateMonitor climate = new ClimateMonitor(field[index], field[index + 1], field[index + 2], field[index + 3], field[index + 4]);
-                    list.addLast(climate);
-                }
-                reader.close();
-
-                return list;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (!file.exists()) {
+            System.out.println("File non esistente");
             return list;
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(filePathCoordinate));
+            String[] field;
+            while (true) {
+                int index = 0;
+                String readerLiner = reader.readLine();
+                if (readerLiner == null || readerLiner.equals("")) break;
+                field = readerLiner.split(",");
+                ClimateMonitor climate = new ClimateMonitor(field[index], field[index + 1], field[index + 2], field[index + 3], field[index + 4]);
+                list.addLast(climate);
+            }
+            reader.close();
+
+            return list;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
 
     }
 
+    /**
+     * Function to search Area Geografica for nome switch between precise and lazy
+     * @param nomeArea String
+     * @param scelta int
+     * @return LinkedList of the areaFound
+     */
     public static LinkedList<ClimateMonitor> cercaAreaGeografica(String nomeArea, int scelta) {
         Objects.requireNonNull(nomeArea);
         nomeArea = nomeArea.replaceAll("\\s", "");
@@ -80,13 +100,13 @@ public class ClimateMonitor {
         if (climateList.size() == 0) {
             return areaFoundList;
         }
-        if (scelta == 0){
+        if (scelta == 0) {
             for (ClimateMonitor climate : climateList) {
                 if (climate.name.equals(nomeArea)) {
                     areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
                 }
             }
-        }else if (scelta == 1) {
+        } else if (scelta == 1) {
             for (ClimateMonitor climate : climateList) {
                 if (climate.country.equals(nomeArea)) {
                     areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
@@ -97,6 +117,13 @@ public class ClimateMonitor {
         return areaFoundList;
     }
 
+    /**
+     * Function to Search AreaGeografica by lat and lon it can be precise or lazy
+     * @param lat String
+     * @param lon String
+     * @param scelta int
+     * @return LinkedList of the areaFound
+     */
     public static LinkedList<ClimateMonitor> cercaAreaGeografica(String lat, String lon, int scelta) {
         Objects.requireNonNull(lat);
         Objects.requireNonNull(lon);
@@ -108,13 +135,13 @@ public class ClimateMonitor {
         if (climateList.size() == 0) {
             return areaFoundList;
         }
-        if (scelta == 0){
+        if (scelta == 0) {
             for (ClimateMonitor climate : climateList) {
                 //replace double quotes with empty string
                 climate.latitude = climate.latitude.replaceAll("\\s", "");
                 climate.longitude = climate.longitude.replaceAll("\\s", "");
                 //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
-                if(climate.latitude.equals(lat) && climate.longitude.equals(lon)){
+                if (climate.latitude.equals(lat) && climate.longitude.equals(lon)) {
                     areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
                 }
             }
@@ -127,32 +154,39 @@ public class ClimateMonitor {
                 String[] climateLatArr;
                 climateLatArr = climate.latitude.split("\\.");
                 //System.out.println("LatGet: " + climateLatArr[0] + " " + "LatPassata: " +lat + " " + "LongGet: " + climateLongArr[0] + " " + "LongPassata: " + lon);
-                if(climateLatArr[0].contains(lat) && climateLongArr[0].contains(lon) && climateLatArr[0].length() == lat.length() && climateLongArr[0].length() == lon.length()){
+                if (climateLatArr[0].contains(lat) && climateLongArr[0].contains(lon) && climateLatArr[0].length() == lat.length() && climateLongArr[0].length() == lon.length()) {
                     areaFoundList.addLast(new ClimateMonitor(climate.name, climate.country_id, climate.country, climate.latitude, climate.longitude));
-            }}
+                }
+            }
         }
 
         return areaFoundList;
     }
 
+    /**
+     * Function to create a Summary of the Area passed by Name
+     * @param nomeArea String
+     * @return HashMap
+     */
     public static HashMap<String, String> visualizzaAreaGeografica(String nomeArea) {
 
         Objects.requireNonNull(nomeArea);
-        LinkedList<ClimateMonitor> areaFoundList = cercaAreaGeografica(nomeArea,0);
+        LinkedList<ClimateMonitor> areaFoundList = cercaAreaGeografica(nomeArea, 0);
         if (areaFoundList.size() == 0) {
             return arrayResponseCreate("false", "Area non trovata");
         }
 
         LinkedList<ParametriClimatici> listAll = ParametriClimatici.readParametri();
         int[][] idMonitoraggio = new int[2][7];
-        String[] notesMonitoraggio = {"\n","\n", "\n", "\n", "\n", "\n", "\n"};
+        String[] notesMonitoraggio = {"\n", "\n", "\n", "\n", "\n", "\n", "\n"};
         int numeroVolteAreaTrovata = 0;
+        assert listAll != null;
         for (ParametriClimatici parametriClimatici : listAll) {
             if (parametriClimatici.areaInteresse.equals(nomeArea)) {
                 int index = ParametriClimatici.climateCategory.valueOf(parametriClimatici.climateCategoryToString).ordinal();
                 idMonitoraggio[0][index] += 1;
                 idMonitoraggio[1][index] += parametriClimatici.score;
-                notesMonitoraggio[index] += String.valueOf(idMonitoraggio[0][index])+". "+parametriClimatici.notes +" \n";
+                notesMonitoraggio[index] += (!parametriClimatici.notes.equals("_") ? idMonitoraggio[0][index] + ". " + parametriClimatici.notes + " \n" : "");
                 numeroVolteAreaTrovata += 1;
             }
         }
@@ -161,46 +195,50 @@ public class ClimateMonitor {
             return arrayResponseCreate("false", "Area non trovata");
         }
 
-        for(int i = 0; i < 6; i++){
-            if (idMonitoraggio[0][i] != 0){
-                idMonitoraggio[1][i] = idMonitoraggio[1][i]/idMonitoraggio[0][i];
+        for (int i = 0; i < 6; i++) {
+            if (idMonitoraggio[0][i] != 0) {
+                idMonitoraggio[1][i] = idMonitoraggio[1][i] / idMonitoraggio[0][i];
             }
 
         }
-        String climateCategory ="";
-        for(int i=0; i<6; i++){
-            if(idMonitoraggio[0][i] != 0){
-                climateCategory += "\n"+ParametriClimatici.climateCategory.values()[i]+": \n" +
-                        "Trovata: "+String.valueOf(idMonitoraggio[0][i])+" volte \n"+
-                        "Media: "+String.valueOf(idMonitoraggio[1][i])+" su 5 \n"+
+        String climateCategory = "";
+        for (int i = 0; i < 6; i++) {
+            if (idMonitoraggio[0][i] != 0) {
+                climateCategory += "\n" + ParametriClimatici.climateCategory.values()[i] + ": \n" +
+                        "Trovata: " + idMonitoraggio[0][i] + " volte \n" +
+                        "Media: " + idMonitoraggio[1][i] + " su 5 \n" +
                         "Note: " + notesMonitoraggio[i];
-            }else{
-                climateCategory +=  "\n"+ ParametriClimatici.climateCategory.values()[i]+": \n" +
+            } else {
+                climateCategory += "\n" + ParametriClimatici.climateCategory.values()[i] + ": \n" +
                         "Non Trovata \n";
             }
 
         }
 
-        return arrayResponseCreate("true",climateCategory);
+        return arrayResponseCreate("true", climateCategory);
 
     }
 
-    public static void menuUtente(boolean ... logged){
-        int risposta = 0;
-        do{
+    /**
+     * Function that visualize the menu for every user , it gives fewer functions compared to the logged one
+     * @param logged boolean
+     */
+    public static void menuUtente(boolean logged) {
+        int risposta;
+        do {
             System.out.println("Benvenuto nel programma di monitoraggio climatico");
             System.out.println("Premi 1 per cercare un'area geografica tramite nome");
             System.out.println("Premi 2 per cercare un'area geografica tramite stato");
             System.out.println("Premi 3 per cercare un'area geografica tramite latitudine e longitudine Precisa");
             System.out.println("Premi 4 per cercare un'area geografica tramite latitudine e longitudine Approssimata");
             System.out.println("Premi 5 per visualizzare le statistiche di un'area geografica");
-            if(logged[0]){
+            if (logged) {
                 System.out.println("Premi 6 per creare un centro di monitoraggio");
                 System.out.println("Premi 7 per inserire/aggiornare i parametri climatici");
             }
             System.out.println("Premi 0 per ritornare al menu precedente");
             Scanner scanner = new Scanner(System.in);
-            risposta = scanner.nextInt();
+            risposta = tryScannerInt(scanner);
             switch (risposta) {
                 case 1 -> {
                     System.out.println("Inserisci il nome dell'area geografica");
@@ -272,7 +310,7 @@ public class ClimateMonitor {
                     }
                 }
                 case 6 -> {
-                    if (logged[0]) {
+                    if (logged) {
                         System.out.println("Inserisci il nome del centro");
                         scanner = new Scanner(System.in);
                         String nomeCentro = scanner.nextLine();
@@ -294,12 +332,12 @@ public class ClimateMonitor {
                     }
                 }
                 case 7 -> {
-                    if (logged[0]) {
+                    if (logged) {
                         HashMap<String, String> response;
                         String date = ParametriClimatici.dateNow();
                         System.out.println("Inserisci l'id del centro");
                         scanner = new Scanner(System.in);
-                        int idCentro = scanner.nextInt();
+                        int idCentro = tryScannerInt(scanner);
                         System.out.println("Inserisci l'area d'interesse");
                         scanner = new Scanner(System.in);
                         String area = scanner.nextLine();
@@ -312,10 +350,28 @@ public class ClimateMonitor {
                         System.out.println("6 - Altitudine dei ghiacciai: In m, suddivisa in piogge");
                         System.out.println("7 - Massa dei ghiacciai: In kg, suddivisa in fasce");
                         scanner = new Scanner(System.in);
-                        int tipoDato = scanner.nextInt();
+                        int tipoDato = tryScannerInt(scanner);
+                        while (tipoDato < 1 || tipoDato > 7) {
+                            System.out.println("Numero Non corrispondente");
+                            System.out.println("Inserisci il numero corrispondente al tipo di dato che vuoi inserire");
+                            System.out.println("1 - Vento: Velocità del vento (km/h), suddivisa in fasce ");
+                            System.out.println("2 - Umidita: % di Umidità, suddivisa in fasce'");
+                            System.out.println("3 - Pressione: In hPa, suddivisa in fasce ");
+                            System.out.println("4 - Temperatura: In C°, suddivisa in fasce");
+                            System.out.println("5 - Precipitazioni: In mm di pioggia, suddivisa in fasce");
+                            System.out.println("6 - Altitudine dei ghiacciai: In m, suddivisa in piogge");
+                            System.out.println("7 - Massa dei ghiacciai: In kg, suddivisa in fasce");
+                            scanner = new Scanner(System.in);
+                            tipoDato = tryScannerInt(scanner);
+                        }
                         System.out.println("Inserisci lo score per il parametro scelto");
                         scanner = new Scanner(System.in);
-                        int score = scanner.nextInt();
+                        int score = tryScannerInt(scanner);
+                        while (score > 5 || score < 1) {
+                            System.out.println("Lo score inserito deve rientrare tra 1 e 5 compresi");
+                            scanner = new Scanner(System.in);
+                            score = tryScannerInt(scanner);
+                        }
                         System.out.println("Inserisci le note");
                         scanner = new Scanner(System.in);
                         String note = scanner.nextLine();
@@ -325,7 +381,7 @@ public class ClimateMonitor {
                             scanner = new Scanner(System.in);
                             note = scanner.nextLine();
                         }
-                        response = ParametriClimatici.inserisciParametriClimatici(new ParametriClimatici(idCentro, area, date, tipoDato, score, note));
+                        response = ParametriClimatici.inserisciParametriClimatici(new ParametriClimatici(idCentro, area, date, tipoDato - 1, score, note));
                         if (response.get("success").equals("true")) {
                             System.out.println("Parametri inseriti correttamente");
 
@@ -334,14 +390,18 @@ public class ClimateMonitor {
                 }
             }
 
-        }while (risposta != 0);
-        System.out.println("Grazie per aver usato il programma di monitoraggio climatico");
+        } while (risposta != 0);
     }
 
-    public static void insertCentroArea(int idCentro,boolean autenticato){
-        if (!autenticato){
+    /**
+     * Function to insert a centro area if someone during the registration use a idCentro not found in the file
+     * @param idCentro int
+     * @param autenticato boolean
+     */
+    public static void insertCentroArea(int idCentro, boolean autenticato) {
+        if (!autenticato) {
             System.out.println("Non sei loggato");
-            menuUtente();
+            menuUtente(false);
         }
         Scanner scanner = new Scanner(System.in);
         System.out.println("Inserisci il nome del centro");
@@ -350,28 +410,44 @@ public class ClimateMonitor {
         String indirizzoCentro = scanner.nextLine();
         System.out.println("Inserisci la citta");
         String citta = scanner.nextLine();
-        CentroAree centroAree = new CentroAree(idCentro,nomeCentro,indirizzoCentro,citta);
-        boolean centroResult =CentroAree.insertCentro(centroAree);
-        if (centroResult){
+        CentroAree centroAree = new CentroAree(idCentro, nomeCentro, indirizzoCentro, citta);
+        boolean centroResult = CentroAree.insertCentro(centroAree);
+        if (centroResult) {
             System.out.println("Centro inserito correttamente");
             menuUtente(autenticato);
-        }else{
+        } else {
             System.out.println("Errore nell'inserimento del centro");
         }
     }
 
+    /**
+     * Utility Function to manage the Scanner InputMismatchException
+     * @param scanner Scanner
+     * @return int
+     */
+    public static int tryScannerInt(Scanner scanner) {
+        try {
+            return scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Formato Sbagliato Inserire un numero");
+        }
+        return -1;
+    }
 
-
-    public static void menuLogin(Login login){
-        int risposta= 0;
-        do{
+    /**
+     * First menu that user see
+     * @param login Login
+     */
+    public static void menuLogin(Login login) {
+        int risposta;
+        do {
             System.out.println("Benvenuto nel programma di monitoraggio climatico");
             System.out.println("Premi 1 per registrarti");
             System.out.println("Premi 2 per effettuare il login");
             System.out.println("Premi 3 per continuare come guest");
             System.out.println("Premi 0 per uscire");
             Scanner scanner = new Scanner(System.in);
-            risposta = scanner.nextInt();
+            risposta = tryScannerInt(scanner);
             switch (risposta) {
                 case 1 -> {
                     boolean insertCentro = false;
@@ -395,7 +471,7 @@ public class ClimateMonitor {
                     String codiceFiscale = scanner.nextLine();
                     System.out.println("Inserisci il tuo centro di appartenenza");
                     scanner = new Scanner(System.in);
-                    int centro = scanner.nextInt();
+                    int centro = tryScannerInt(scanner);
                     if (CentroAree.cercaCentro(centro) == null) {
                         System.out.println("Centro non trovato");
                         insertCentro = true;
@@ -433,38 +509,20 @@ public class ClimateMonitor {
                 }
                 case 3 -> {
                     System.out.println("Continui come guest");
-                    menuUtente();
+                    menuUtente(false);
                 }
             }
 
-        }while(risposta != 0);
+        } while (risposta != 0);
     }
 
-
-
+    /**
+     * Main
+     * @param args String[]
+     */
     public static void main(String[] args) {
-
-
-
         Login login = new Login();
         menuLogin(login);
-
-
-
-
-
-
-        /*
-        LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica("42","1");
-        for (ClimateMonitor climateMonitor : areaTrovata) {
-            System.out.println("Nome: " + climateMonitor.name + " " + climateMonitor.country_id + " " + climateMonitor.country + " " + climateMonitor.latitude + " " + climateMonitor.longitude);
-        }
-        LinkedList<ClimateMonitor> list = readClimateCoordinates();
-        for (ClimateMonitor climateMonitor : list) {
-            System.out.println(climateMonitor.name);
-        }
-
-         */
     }
 }
 

@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"src.climatemonitoring","l":"CentroAree"},{"p":"src.climatemonitoring","l":"ClimateMonitor"},{"p":"src.climatemonitoring","l":"Login"},{"p":"src.climatemonitoring","l":"ParametriClimatici"},{"p":"src.climatemonitoring","l":"Registration"}];updateSearchResults();
