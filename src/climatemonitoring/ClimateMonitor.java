@@ -243,7 +243,7 @@ public class ClimateMonitor {
                 case 1 -> {
                     System.out.println("Inserisci il nome dell'area geografica");
                     scanner = new Scanner(System.in);
-                    String nomeArea = scanner.nextLine();
+                    String nomeArea =retryWhenEmpty("Inserisci il nome dell'area geografica", scanner);
                     LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(nomeArea, 0);
                     if (areaTrovata.size() == 0) {
                         System.out.println("Area non trovata");
@@ -256,7 +256,7 @@ public class ClimateMonitor {
                 case 2 -> {
                     System.out.println("Inserisci il nome dell'area geografica");
                     scanner = new Scanner(System.in);
-                    String nomeArea = scanner.nextLine();
+                    String nomeArea = retryWhenEmpty("Inserisci il nome dell'area geografica", scanner);
                     LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(nomeArea, 1);
                     if (areaTrovata.size() == 0) {
                         System.out.println("Area non trovata");
@@ -269,10 +269,10 @@ public class ClimateMonitor {
                 case 3 -> {
                     System.out.println("Inserisci la latitudine");
                     scanner = new Scanner(System.in);
-                    String lat = scanner.nextLine();
+                    String lat = retryWhenEmpty("Inserisci la latitudine", scanner);
                     System.out.println("Inserisci la longitudine");
                     scanner = new Scanner(System.in);
-                    String lon = scanner.nextLine();
+                    String lon = retryWhenEmpty("Inserisci la longitudine", scanner);
                     LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(lat, lon, 0);
                     if (areaTrovata.size() == 0) {
                         System.out.println("Area non trovata");
@@ -285,10 +285,10 @@ public class ClimateMonitor {
                 case 4 -> {
                     System.out.println("Inserisci la latitudine");
                     scanner = new Scanner(System.in);
-                    String lat = scanner.nextLine();
+                    String lat = retryWhenEmpty("Inserisci la latitudine", scanner);
                     System.out.println("Inserisci la longitudine");
                     scanner = new Scanner(System.in);
-                    String lon = scanner.nextLine();
+                    String lon = retryWhenEmpty("Inserisci la longitudine", scanner);
                     LinkedList<ClimateMonitor> areaTrovata = cercaAreaGeografica(lat, lon, 1);
                     if (areaTrovata.size() == 0) {
                         System.out.println("Area non trovata");
@@ -301,7 +301,7 @@ public class ClimateMonitor {
                 case 5 -> {
                     System.out.println("Inserisci il nome dell'area geografica");
                     scanner = new Scanner(System.in);
-                    String nomeArea = scanner.nextLine();
+                    String nomeArea = retryWhenEmpty("Inserisci il nome dell'area geografica", scanner);
                     HashMap<String, String> areaTrovata = visualizzaAreaGeografica(nomeArea);
                     if (areaTrovata.get("success").equals("false")) {
                         System.out.println("Area non trovata");
@@ -313,13 +313,13 @@ public class ClimateMonitor {
                     if (logged) {
                         System.out.println("Inserisci il nome del centro");
                         scanner = new Scanner(System.in);
-                        String nomeCentro = scanner.nextLine();
+                        String nomeCentro = retryWhenEmpty("Inserisci il nome del centro", scanner);
                         System.out.println("Inserisci l'indirizzo del centro");
                         scanner = new Scanner(System.in);
-                        String indirizzoCentro = scanner.nextLine();
+                        String indirizzoCentro = retryWhenEmpty("Inserisci l'indirizzo del centro", scanner);
                         System.out.println("Inserisci la citta");
                         scanner = new Scanner(System.in);
-                        String citta = scanner.nextLine();
+                        String citta = retryWhenEmpty("Inserisci la citta", scanner);
                         CentroAree centroAree = new CentroAree(0, nomeCentro, indirizzoCentro, citta);
                         boolean centroResult = CentroAree.insertCentro(centroAree);
                         if (centroResult) {
@@ -340,7 +340,7 @@ public class ClimateMonitor {
                         int idCentro = tryScannerInt(scanner);
                         System.out.println("Inserisci l'area d'interesse");
                         scanner = new Scanner(System.in);
-                        String area = scanner.nextLine();
+                        String area = retryWhenEmpty("Inserisci l'area d'interesse", scanner);
                         System.out.println("Inserisci il numero corrispondente al tipo di dato che vuoi inserire");
                         System.out.println("1 - Vento: Velocità del vento (km/h), suddivisa in fasce ");
                         System.out.println("2 - Umidita: % di Umidità, suddivisa in fasce'");
@@ -405,11 +405,11 @@ public class ClimateMonitor {
         }
         Scanner scanner = new Scanner(System.in);
         System.out.println("Inserisci il nome del centro");
-        String nomeCentro = scanner.nextLine();
+        String nomeCentro = retryWhenEmpty("Inserisci il nome del centro", scanner);
         System.out.println("Inserisci l'indirizzo del centro");
-        String indirizzoCentro = scanner.nextLine();
+        String indirizzoCentro = retryWhenEmpty("Inserisci l'indirizzo del centro", scanner);
         System.out.println("Inserisci la citta");
-        String citta = scanner.nextLine();
+        String citta = retryWhenEmpty("Inserisci la citta", scanner);
         CentroAree centroAree = new CentroAree(idCentro, nomeCentro, indirizzoCentro, citta);
         boolean centroResult = CentroAree.insertCentro(centroAree);
         if (centroResult) {
@@ -435,6 +435,20 @@ public class ClimateMonitor {
     }
 
     /**
+     * Utility function to do a cycle when the user doesn't enter an input
+     */
+    public static String retryWhenEmpty(String message, Scanner scanner) {
+        String readLine = scanner.nextLine();
+        while (readLine.isEmpty()) {
+            System.out.println("Non puoi lasciare vuoto questo campo");
+            System.out.println(message);
+            scanner = new Scanner(System.in);
+            readLine = scanner.nextLine();
+        }
+        return readLine;
+    }
+
+    /**
      * First menu that user see
      * @param login Login
      */
@@ -453,22 +467,22 @@ public class ClimateMonitor {
                     boolean insertCentro = false;
                     System.out.println("Inserisci il tuo nome");
                     scanner = new Scanner(System.in);
-                    String nome = scanner.nextLine();
+                    String nome = retryWhenEmpty("Inserisci il tuo nome", scanner);
                     System.out.println("Inserisci il tuo cognome");
                     scanner = new Scanner(System.in);
-                    String cognome = scanner.nextLine();
+                    String cognome = retryWhenEmpty("Inserisci il tuo cognome", scanner);
                     System.out.println("Inserisci il tuo username");
                     scanner = new Scanner(System.in);
-                    String username = scanner.nextLine();
+                    String username = retryWhenEmpty("Inserisci il tuo username", scanner);
                     System.out.println("Inserisci la tua password");
                     scanner = new Scanner(System.in);
-                    String password = scanner.nextLine();
+                    String password = retryWhenEmpty("Inserisci la tua password", scanner);
                     System.out.println("Inserisci la tua email");
                     scanner = new Scanner(System.in);
-                    String email = scanner.nextLine();
+                    String email = retryWhenEmpty("Inserisci la tua email", scanner);
                     System.out.println("Inserisci il tuo codice fiscale");
                     scanner = new Scanner(System.in);
-                    String codiceFiscale = scanner.nextLine();
+                    String codiceFiscale = retryWhenEmpty("Inserisci il tuo codice fiscale", scanner);
                     System.out.println("Inserisci il tuo centro di appartenenza");
                     scanner = new Scanner(System.in);
                     int centro = tryScannerInt(scanner);
@@ -494,10 +508,10 @@ public class ClimateMonitor {
                 case 2 -> {
                     System.out.println("Inserisci il tuo username");
                     scanner = new Scanner(System.in);
-                    String username = scanner.nextLine();
+                    String username = retryWhenEmpty("Inserisci il tuo username", scanner);
                     System.out.println("Inserisci la tua password");
                     scanner = new Scanner(System.in);
-                    String password = scanner.nextLine();
+                    String password = retryWhenEmpty("Inserisci la tua password", scanner);
                     login = new Login(username, password);
                     boolean logged = login.login();
                     if (logged) {
