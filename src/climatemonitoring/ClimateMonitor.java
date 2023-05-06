@@ -49,17 +49,44 @@ public class ClimateMonitor {
     }
 
     /**
+     * Function utility for the creation of file
+     * @param filePath String
+     *                 Example: data/CoordinateMonitoraggio.dati
+     *
+     */
+    public static boolean createFile(String filePath) {
+        File directory = new File(System.getProperty("user.dir")+ "/data");
+        File file = new File(System.getProperty("user.dir")+"/"+filePath);
+        int fileCreated = 0;
+        int directoryCreated = 0;
+        try {
+        if (!directory.exists()){
+            if(directory.mkdir())directoryCreated = 1;
+        }
+        if (!file.exists()) {
+
+                if(file.createNewFile())
+                    fileCreated = 1;
+                    //System.out.println("File creato");
+
+            }
+        }
+        catch (IOException e) {
+            System.out.println("Errore nella creazione del file");
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
      * Function to read the coordinate
      * @return LinkedList
      */
     public static LinkedList<ClimateMonitor> readClimateCoordinates() {
         LinkedList<ClimateMonitor> list = new LinkedList<>();
-        File file = new File(filePathCoordinate);
-
-        if (!file.exists()) {
-            System.out.println("File non esistente");
-            return list;
-        }
+        boolean fileCreated = ClimateMonitor.createFile(filePathCoordinate);
+        if (!fileCreated) return list;
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filePathCoordinate));
@@ -426,12 +453,16 @@ public class ClimateMonitor {
      * @return int
      */
     public static int tryScannerInt(Scanner scanner) {
-        try {
-            return scanner.nextInt();
-        } catch (InputMismatchException e) {
-            System.out.println("Formato Sbagliato Inserire un numero");
+        int risposta = -1;
+        while(risposta == -1) {
+            try {
+                scanner = new Scanner(System.in);
+                risposta = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Formato Sbagliato Inserire un numero");
+            }
         }
-        return -1;
+            return risposta;
     }
 
     /**
@@ -486,6 +517,10 @@ public class ClimateMonitor {
                     System.out.println("Inserisci il tuo centro di appartenenza");
                     scanner = new Scanner(System.in);
                     int centro = tryScannerInt(scanner);
+
+
+
+
                     if (CentroAree.cercaCentro(centro) == null) {
                         System.out.println("Centro non trovato");
                         insertCentro = true;

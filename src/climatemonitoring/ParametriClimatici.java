@@ -50,10 +50,9 @@ public class ParametriClimatici extends Login {
 	static boolean writeParametri(LinkedList<ParametriClimatici> list) {
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
-		File file;
+
 		try {
-			file = new File(filepathParametriClimatici);
-			if (!file.exists()) file.createNewFile();
+			ClimateMonitor.createFile(filepathParametriClimatici);
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepathParametriClimatici));
 			for (ParametriClimatici r : list) {
 				writer.write(r.id_centro + ";" + r.areaInteresse + ";" + r.dataRilevazione + ";" + r.climateCategoryToString + ";" + r.score + ";" + (!r.notes.isEmpty() ? r.notes : "_"));
@@ -73,8 +72,8 @@ public class ParametriClimatici extends Login {
 	 */
 	public static LinkedList<ParametriClimatici> readParametri() {
 		LinkedList<ParametriClimatici> list = new LinkedList<>();
-		File file = new File(filepathParametriClimatici);
-		if (!file.exists()) return list;
+		boolean fileCreated = ClimateMonitor.createFile(filepathParametriClimatici);
+		if (!fileCreated) return list;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filepathParametriClimatici));
 			String[] campiTotali;

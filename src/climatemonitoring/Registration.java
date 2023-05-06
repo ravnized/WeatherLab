@@ -47,10 +47,9 @@ class Registration {
 	static boolean writeRegistrati(LinkedList<Registration> list) {
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
-		File file;
+
 		try {
-			file = new File(filepathOperatoriRegistrati);
-			if (!file.exists()) file.createNewFile();
+			ClimateMonitor.createFile(filepathOperatoriRegistrati);
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filepathOperatoriRegistrati));
 			for (Registration r : list) {
 				writer.write(r.nome + ";" + r.cognome + ";" + r.codiceFiscale + ";" + r.email + ";" + r.userid + ";" + r.password + ";" + r.centroMonitoraggio);
@@ -88,8 +87,8 @@ class Registration {
 	 */
 	public static LinkedList<Registration> readRegistrati() {
 		LinkedList<Registration> list = new LinkedList<>();
-		File file = new File(filepathOperatoriRegistrati);
-		if (!file.exists()) return list;
+		boolean fileCreated = ClimateMonitor.createFile(filepathOperatoriRegistrati);
+		if (!fileCreated) return list;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filepathOperatoriRegistrati));
 			String[] campiTotali;

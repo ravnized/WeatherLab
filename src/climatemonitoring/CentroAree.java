@@ -41,10 +41,9 @@ public class CentroAree extends Login {
 
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
-		File file;
+
 		try {
-			file = new File(filePathCentri);
-			if (!file.exists()) file.createNewFile();
+			ClimateMonitor.createFile(filePathCentri);
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filePathCentri));
 			for (CentroAree c : list) {
 				writer.write(c.id + ";" + c.nome + ";" + c.indirizzo + ";" + c.citta);
@@ -65,8 +64,8 @@ public class CentroAree extends Login {
 	 */
 	public static LinkedList<CentroAree> readCentri() {
 		LinkedList<CentroAree> list = new LinkedList<>();
-		File file = new File(filePathCentri);
-		if (!file.exists()) return list;
+		boolean fileCreated = ClimateMonitor.createFile(filePathCentri);
+		if (!fileCreated) return list;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filePathCentri));
 			String[] campiTotali;
@@ -101,7 +100,10 @@ public class CentroAree extends Login {
 		}
 		Objects.requireNonNull(centro, "centro cannot be null");
 		int sizeList = ClimateMonitor.cercaAreaGeografica(centro.citta, 0).size();
-		if (sizeList == 0) return false;
+		if (sizeList == 0){
+			System.out.println("Città non presente in CoordinateMonitoraggio");
+			return false;
+		};
 		LinkedList<CentroAree> list = readCentri();
 		assert list != null;
 		for (CentroAree centroAree : list) {
