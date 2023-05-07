@@ -53,7 +53,7 @@ public class ParametriClimatici extends Login {
 	 * @param list LinkedList
 	 * @return boolean
 	 */
-	static boolean writeParametri(LinkedList<ParametriClimatici> list) {
+	public static boolean writeParametri(LinkedList<ParametriClimatici> list) {
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
 

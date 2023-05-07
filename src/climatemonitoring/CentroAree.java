@@ -42,7 +42,7 @@ public class CentroAree extends Login {
 	 * @param list LinkedList
 	 * @return boolean if the operation is successful or not
 	 */
-	static boolean writeCentri(LinkedList<CentroAree> list) {
+	public static boolean writeCentri(LinkedList<CentroAree> list) {
 
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
