@@ -1,3 +1,9 @@
+/*
+Autori:
+Federico, Tognali, 748247, VA
+Gianpaolo, Torino, 746577, VA
+ */
+
 package src.climatemonitoring;
 
 import java.io.*;
