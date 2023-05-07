@@ -50,7 +50,7 @@ class Registration {
 	 * @param list LinkedList
 	 * @return boolean, true if the operation is successful
 	 */
-	static boolean writeRegistrati(LinkedList<Registration> list) {
+	public static boolean writeRegistrati(LinkedList<Registration> list) {
 		Objects.requireNonNull(list, "list cannot be null");
 		if (list.isEmpty()) return false;
 

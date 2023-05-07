@@ -57,7 +57,7 @@ public class ClimateMonitor {
      * Function utility for the creation of file
      * @param filePath String
      *                 Example: data/CoordinateMonitoraggio.dati
-     *
+     * @return boolean
      */
     public static boolean createFile(String filePath) {
         File directory = new File(System.getProperty("user.dir")+ "/data");
@@ -472,6 +472,9 @@ public class ClimateMonitor {
 
     /**
      * Utility function to do a cycle when the user doesn't enter an input
+     * @param message String
+     * @param scanner Scanner
+     * @return String
      */
     public static String retryWhenEmpty(String message, Scanner scanner) {
         String readLine = scanner.nextLine();
