@@ -1,2 +1,2 @@
-Cognome,nome,numero di matricola,sede
-Cognome,nome,numero di matricola,sede
+Federico, Tognali, 748247, VA
+Gianpaolo, Torino, 746577, VA

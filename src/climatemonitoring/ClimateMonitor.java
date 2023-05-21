@@ -458,8 +458,8 @@ public class ClimateMonitor {
      * @return int
      */
     public static int tryScannerInt(Scanner scanner) {
-        int risposta = -1;
-        while(risposta == -1) {
+        int risposta = -999;
+        while(risposta == -999) {
             try {
                 scanner = new Scanner(System.in);
                 risposta = scanner.nextInt();
